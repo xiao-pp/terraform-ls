@@ -37,7 +37,7 @@ func (h *logHandler) References(ctx context.Context, params lsp.ReferenceParams)
 		return list, err
 	}
 
-	d, err := decoderForDocument(ctx, mod, file.LanguageID())
+	d, err := decoderForDocument(ctx, h.logger, mod, file.LanguageID())
 	if err != nil {
 		return list, err
 	}

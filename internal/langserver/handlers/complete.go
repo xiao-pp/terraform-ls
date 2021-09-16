@@ -41,7 +41,7 @@ func (h *logHandler) TextDocumentComplete(ctx context.Context, params lsp.Comple
 		return list, err
 	}
 
-	d, err := decoderForDocument(ctx, mod, file.LanguageID())
+	d, err := decoderForDocument(ctx, h.logger, mod, file.LanguageID())
 	if err != nil {
 		return list, err
 	}

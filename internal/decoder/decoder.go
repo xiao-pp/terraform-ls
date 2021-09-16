@@ -2,6 +2,7 @@ package decoder
 
 import (
 	"context"
+	"log"
 
 	"github.com/hashicorp/hcl-lang/decoder"
 	"github.com/hashicorp/hcl-lang/lang"
@@ -40,14 +41,20 @@ func DecoderForModule(ctx context.Context, mod module.Module) (*decoder.Decoder,
 	return d, nil
 }
 
-func DecoderForVariables(varsFiles ast.VarsFiles) (*decoder.Decoder, error) {
+func DecoderForVariables(varsFiles ast.VarsFiles, logger *log.Logger) (*decoder.Decoder, error) {
 	d := decoder.NewDecoder()
 
+	logger.Printf("loading %d varfiles", len(varsFiles))
 	for name, f := range varsFiles {
+		logger.Printf("loading varfile: %q", name)
 		err := d.LoadFile(name.String(), f)
 		if err != nil {
 			// skip unreadable files
+			// return nil, err
+			logger.Printf("skipping varfile %q: %s", name, err)
 			continue
+		} else {
+			logger.Printf("loaded varfile %q", name)
 		}
 	}
 

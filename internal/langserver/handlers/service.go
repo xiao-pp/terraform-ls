@@ -533,9 +533,9 @@ func schemaForDocument(mf module.ModuleFinder, doc filesystem.Document) (*schema
 	return mf.SchemaForModule(doc.Dir())
 }
 
-func decoderForDocument(ctx context.Context, mod module.Module, languageID string) (*decoder.Decoder, error) {
+func decoderForDocument(ctx context.Context, logger *log.Logger, mod module.Module, languageID string) (*decoder.Decoder, error) {
 	if languageID == ilsp.Tfvars.String() {
-		return idecoder.DecoderForVariables(mod.ParsedVarsFiles)
+		return idecoder.DecoderForVariables(mod.ParsedVarsFiles, logger)
 	}
 	return idecoder.DecoderForModule(ctx, mod)
 }

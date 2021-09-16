@@ -55,7 +55,7 @@ func (lh *logHandler) TextDocumentSemanticTokensFull(ctx context.Context, params
 		return tks, err
 	}
 
-	d, err := decoderForDocument(ctx, mod, doc.LanguageID())
+	d, err := decoderForDocument(ctx, lh.logger, mod, doc.LanguageID())
 	if err != nil {
 		return tks, err
 	}

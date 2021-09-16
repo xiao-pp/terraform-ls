@@ -36,7 +36,7 @@ func (h *logHandler) TextDocumentSymbol(ctx context.Context, params lsp.Document
 		return symbols, err
 	}
 
-	d, err := decoderForDocument(ctx, mod, file.LanguageID())
+	d, err := decoderForDocument(ctx, h.logger, mod, file.LanguageID())
 	if err != nil {
 		return symbols, err
 	}

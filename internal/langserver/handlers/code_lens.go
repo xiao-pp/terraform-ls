@@ -60,7 +60,7 @@ func (h *logHandler) referenceCountCodeLens(ctx context.Context, doc filesystem.
 		return list
 	}
 
-	d, err := decoderForDocument(ctx, mod, doc.LanguageID())
+	d, err := decoderForDocument(ctx, h.logger, mod, doc.LanguageID())
 	if err != nil {
 		return list
 	}

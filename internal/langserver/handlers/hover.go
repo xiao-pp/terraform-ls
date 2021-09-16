@@ -39,7 +39,7 @@ func (h *logHandler) TextDocumentHover(ctx context.Context, params lsp.TextDocum
 		return nil, err
 	}
 
-	d, err := decoderForDocument(ctx, mod, file.LanguageID())
+	d, err := decoderForDocument(ctx, h.logger, mod, file.LanguageID())
 	if err != nil {
 		return nil, err
 	}
