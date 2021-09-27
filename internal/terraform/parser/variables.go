@@ -5,6 +5,7 @@ import (
 
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
+	"github.com/hashicorp/hcl/v2/json"
 	"github.com/hashicorp/terraform-ls/internal/terraform/ast"
 )
 
@@ -35,11 +36,21 @@ func ParseVariableFiles(fs FS, modPath string) (ast.VarsFiles, ast.VarsDiags, er
 			return nil, nil, err
 		}
 
-		f, pDiags := hclsyntax.ParseConfig(src, name, hcl.InitialPos)
-		filename := ast.VarsFilename(name)
-		diags[filename] = pDiags
+		file := ast.VarsFilename(name)
+
+		var (
+			f      *hcl.File
+			pDiags hcl.Diagnostics
+		)
+		if file.IsJSON() {
+			f, pDiags = json.Parse(src, name)
+		} else {
+			f, pDiags = hclsyntax.ParseConfig(src, name, hcl.InitialPos)
+		}
+
+		diags[file] = pDiags
 		if f != nil {
-			files[filename] = f
+			files[file] = f
 		}
 	}
 

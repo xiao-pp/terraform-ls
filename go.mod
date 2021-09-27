@@ -35,3 +35,5 @@ require (
 	github.com/zclconf/go-cty-debug v0.0.0-20191215020915-b22d67c1ba0b
 	golang.org/x/tools v0.0.0-20200323144430-8dcfad9e016e
 )
+
+replace github.com/hashicorp/hcl-lang => ../hcl-lang

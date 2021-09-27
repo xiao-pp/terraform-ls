@@ -12,7 +12,7 @@ import (
 func (h *logHandler) WorkspaceSymbol(ctx context.Context, params lsp.WorkspaceSymbolParams) ([]lsp.SymbolInformation, error) {
 	var symbols []lsp.SymbolInformation
 
-	mm, err := lsctx.ModuleFinder(ctx)
+	mf, err := lsctx.ModuleFinder(ctx)
 	if err != nil {
 		return symbols, err
 	}
@@ -22,7 +22,7 @@ func (h *logHandler) WorkspaceSymbol(ctx context.Context, params lsp.WorkspaceSy
 		return nil, err
 	}
 
-	modules, err := mm.ListModules()
+	modules, err := mf.ListModules()
 	if err != nil {
 		return nil, err
 	}
@@ -33,10 +33,18 @@ func (h *logHandler) WorkspaceSymbol(ctx context.Context, params lsp.WorkspaceSy
 			return symbols, err
 		}
 
+		h.logger.Printf("%s: loaded files: %q", mod.Path, d.Filenames())
+
+		schema, _ := mf.SchemaForModule(mod.Path)
+		d.SetSchema(schema)
+
 		modSymbols, err := d.Symbols(params.Query)
 		if err != nil {
+			h.logger.Printf("%s: errors: %s", mod.Path, err)
 			continue
 		}
+
+		h.logger.Printf("%s: symbols: %#v", mod.Path, modSymbols)
 
 		symbols = append(symbols, ilsp.SymbolInformation(mod.Path, modSymbols,
 			cc.Workspace.Symbol)...)
