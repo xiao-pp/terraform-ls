@@ -758,7 +758,7 @@ func (s *ModuleStore) SetReferencesState(path string, state op.OpState) error {
 	return nil
 }
 
-func (s *ModuleStore) UpdateReferences(path string, origins reference.Origins, targets reference.Targets, rErr error) error {
+func (s *ModuleStore) UpdateReferences(path string, refs reference.References, rErr error) error {
 	txn := s.db.Txn(true)
 	txn.Defer(func() {
 		s.SetReferencesState(path, op.OpStateLoaded)
@@ -770,8 +770,8 @@ func (s *ModuleStore) UpdateReferences(path string, origins reference.Origins, t
 		return err
 	}
 
-	mod.RefTargets = targets
-	mod.RefOrigins = origins
+	mod.RefTargets = refs.Targets
+	mod.RefOrigins = refs.Origins
 	mod.ReferencesErr = rErr
 
 	err = txn.Insert(s.tableName, mod)

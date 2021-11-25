@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/go-version"
 	"github.com/hashicorp/hcl-lang/lang"
 	"github.com/hashicorp/terraform-ls/internal/decoder"
@@ -283,20 +282,10 @@ func DecodeReferences(ctx context.Context, modStore *state.ModuleStore, schemaRe
 		return err
 	}
 
-	var rErr *multierror.Error
+	refs, rErr := d.CollectReferences()
+	refs.Targets = append(refs.Targets, builtinReferences(modPath)...)
 
-	origins, oErr := d.CollectReferenceOrigins()
-	if oErr != nil {
-		rErr = multierror.Append(rErr, oErr)
-	}
-
-	targets, tErr := d.CollectReferenceTargets()
-	if oErr != nil {
-		rErr = multierror.Append(rErr, tErr)
-	}
-	targets = append(targets, builtinReferences(modPath)...)
-
-	sErr := modStore.UpdateReferences(modPath, origins, targets, rErr.ErrorOrNil())
+	sErr := modStore.UpdateReferences(modPath, refs, rErr)
 	if sErr != nil {
 		return sErr
 	}
