@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/go-version"
 	"github.com/hashicorp/hcl-lang/lang"
 	"github.com/hashicorp/terraform-ls/internal/decoder"
@@ -265,8 +266,8 @@ func LoadModuleMetadata(modStore *state.ModuleStore, modPath string) error {
 	return mErr
 }
 
-func DecodeReferenceTargets(ctx context.Context, modStore *state.ModuleStore, schemaReader state.SchemaReader, modPath string) error {
-	err := modStore.SetReferenceTargetsState(modPath, op.OpStateLoading)
+func DecodeReferences(ctx context.Context, modStore *state.ModuleStore, schemaReader state.SchemaReader, modPath string) error {
+	err := modStore.SetReferencesState(modPath, op.OpStateLoading)
 	if err != nil {
 		return err
 	}
@@ -281,37 +282,21 @@ func DecodeReferenceTargets(ctx context.Context, modStore *state.ModuleStore, sc
 	if err != nil {
 		return err
 	}
-	targets, rErr := d.CollectReferenceTargets()
 
+	var rErr *multierror.Error
+
+	origins, oErr := d.CollectReferenceOrigins()
+	if oErr != nil {
+		rErr = multierror.Append(rErr, oErr)
+	}
+
+	targets, tErr := d.CollectReferenceTargets()
+	if oErr != nil {
+		rErr = multierror.Append(rErr, tErr)
+	}
 	targets = append(targets, builtinReferences(modPath)...)
 
-	sErr := modStore.UpdateReferenceTargets(modPath, targets, rErr)
-	if sErr != nil {
-		return sErr
-	}
-
-	return rErr
-}
-
-func DecodeReferenceOrigins(ctx context.Context, modStore *state.ModuleStore, schemaReader state.SchemaReader, modPath string) error {
-	err := modStore.SetReferenceOriginsState(modPath, op.OpStateLoading)
-	if err != nil {
-		return err
-	}
-
-	d, err := decoder.NewDecoder(ctx, &decoder.PathReader{
-		ModuleReader: modStore,
-		SchemaReader: schemaReader,
-	}).Path(lang.Path{
-		Path:       modPath,
-		LanguageID: ilsp.Terraform.String(),
-	})
-	if err != nil {
-		return err
-	}
-	origins, rErr := d.CollectReferenceOrigins()
-
-	sErr := modStore.UpdateReferenceOrigins(modPath, origins, rErr)
+	sErr := modStore.UpdateReferences(modPath, origins, targets, rErr.ErrorOrNil())
 	if sErr != nil {
 		return sErr
 	}

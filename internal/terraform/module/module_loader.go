@@ -181,15 +181,10 @@ func (ml *moduleLoader) executeModuleOp(ctx context.Context, modOp ModuleOperati
 		if opErr != nil {
 			ml.logger.Printf("failed to load module metadata: %s", opErr)
 		}
-	case op.OpTypeDecodeReferenceTargets:
-		opErr = DecodeReferenceTargets(ctx, ml.modStore, ml.schemaStore, modOp.ModulePath)
+	case op.OpTypeDecodeReferences:
+		opErr = DecodeReferences(ctx, ml.modStore, ml.schemaStore, modOp.ModulePath)
 		if opErr != nil {
-			ml.logger.Printf("failed to decode reference targets: %s", opErr)
-		}
-	case op.OpTypeDecodeReferenceOrigins:
-		opErr = DecodeReferenceOrigins(ctx, ml.modStore, ml.schemaStore, modOp.ModulePath)
-		if opErr != nil {
-			ml.logger.Printf("failed to decode reference origins: %s", opErr)
+			ml.logger.Printf("failed to decode references: %s", opErr)
 		}
 	default:
 		ml.logger.Printf("%s: unknown operation (%#v) for module operation",
@@ -230,10 +225,8 @@ func (ml *moduleLoader) EnqueueModuleOp(modOp ModuleOperation) error {
 		ml.modStore.SetModManifestState(modOp.ModulePath, op.OpStateQueued)
 	case op.OpTypeLoadModuleMetadata:
 		ml.modStore.SetMetaState(modOp.ModulePath, op.OpStateQueued)
-	case op.OpTypeDecodeReferenceTargets:
-		ml.modStore.SetReferenceTargetsState(modOp.ModulePath, op.OpStateQueued)
-	case op.OpTypeDecodeReferenceOrigins:
-		ml.modStore.SetReferenceOriginsState(modOp.ModulePath, op.OpStateQueued)
+	case op.OpTypeDecodeReferences:
+		ml.modStore.SetReferencesState(modOp.ModulePath, op.OpStateQueued)
 	}
 
 	ml.queue.PushOp(modOp)
@@ -256,10 +249,8 @@ func operationState(mod *state.Module, opType op.OpType) op.OpState {
 		return mod.ModManifestState
 	case op.OpTypeLoadModuleMetadata:
 		return mod.MetaState
-	case op.OpTypeDecodeReferenceTargets:
-		return mod.RefTargetsState
-	case op.OpTypeDecodeReferenceOrigins:
-		return mod.RefOriginsState
+	case op.OpTypeDecodeReferences:
+		return mod.ReferencesState
 	}
 	return op.OpStateUnknown
 }

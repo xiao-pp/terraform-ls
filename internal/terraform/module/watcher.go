@@ -248,16 +248,14 @@ func decodeCalledModulesFunc(modMgr ModuleManager, w Watcher, modPath string) De
 			modMgr.EnqueueModuleOp(mc.Path, op.OpTypeParseModuleConfiguration, nil)
 			modMgr.EnqueueModuleOp(mc.Path, op.OpTypeLoadModuleMetadata, nil)
 			modMgr.EnqueueModuleOp(mc.Path, op.OpTypeParseVariables, nil)
-			modMgr.EnqueueModuleOp(mc.Path, op.OpTypeDecodeReferenceTargets, nil)
-			modMgr.EnqueueModuleOp(mc.Path, op.OpTypeDecodeReferenceOrigins, nil)
+			modMgr.EnqueueModuleOp(mc.Path, op.OpTypeDecodeReferences, nil)
 
 			if w != nil {
 				w.AddModule(mc.Path)
 			}
 		}
 
-		modMgr.EnqueueModuleOp(modPath, op.OpTypeDecodeReferenceTargets, nil)
-		modMgr.EnqueueModuleOp(modPath, op.OpTypeDecodeReferenceOrigins, nil)
+		modMgr.EnqueueModuleOp(modPath, op.OpTypeDecodeReferences, nil)
 	}
 }
 

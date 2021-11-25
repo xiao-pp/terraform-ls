@@ -287,11 +287,7 @@ func (w *Walker) walk(ctx context.Context, rootPath string) error {
 			} else {
 				// If there is no module manifest we still collect references
 				// as this module may also be called by other modules.
-				err = w.modMgr.EnqueueModuleOp(dir, op.OpTypeDecodeReferenceTargets, nil)
-				if err != nil {
-					return err
-				}
-				err = w.modMgr.EnqueueModuleOp(dir, op.OpTypeDecodeReferenceOrigins, nil)
+				err = w.modMgr.EnqueueModuleOp(dir, op.OpTypeDecodeReferences, nil)
 				if err != nil {
 					return err
 				}

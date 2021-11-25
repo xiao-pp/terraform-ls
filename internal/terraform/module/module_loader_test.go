@@ -54,13 +54,8 @@ func TestModuleLoader_referenceCollection(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	originsOp := NewModuleOperation(modPath, op.OpTypeDecodeReferenceOrigins)
-	err = ml.EnqueueModuleOp(originsOp)
-	if err != nil {
-		t.Fatal(err)
-	}
-	targetsOp := NewModuleOperation(modPath, op.OpTypeDecodeReferenceTargets)
-	err = ml.EnqueueModuleOp(targetsOp)
+	refsOp := NewModuleOperation(modPath, op.OpTypeDecodeReferences)
+	err = ml.EnqueueModuleOp(refsOp)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -68,10 +63,8 @@ func TestModuleLoader_referenceCollection(t *testing.T) {
 	t.Log("waiting for all operations to finish")
 	<-manifestOp.done()
 	t.Log("manifest parsed")
-	<-originsOp.done()
-	t.Log("origins collected")
-	<-targetsOp.done()
-	t.Log("targets collected")
+	<-refsOp.done()
+	t.Log("references collected")
 
 	mod, err := ss.Modules.ModuleByPath(modPath)
 	if err != nil {
