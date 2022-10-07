@@ -50,6 +50,8 @@ func toCompletionItem(candidate lang.Candidate, caps lsp.CompletionClientCapabil
 		kind = lsp.StructCompletion
 	case lang.TraversalCandidateKind:
 		kind = lsp.VariableCompletion
+	case lang.FunctionCandidateKind:
+		kind = lsp.FunctionCompletion
 	}
 
 	// TODO: Omit item which uses kind unsupported by the client
