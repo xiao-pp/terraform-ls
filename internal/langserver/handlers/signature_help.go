@@ -4,7 +4,6 @@ import (
 	"context"
 
 	ilsp "github.com/hashicorp/terraform-ls/internal/lsp"
-	"github.com/hashicorp/terraform-ls/internal/protocol"
 	lsp "github.com/hashicorp/terraform-ls/internal/protocol"
 )
 
@@ -34,27 +33,6 @@ func (svc *service) SignatureHelp(ctx context.Context, params lsp.SignatureHelpP
 	if err != nil {
 		return nil, err
 	}
-	if sig == nil {
-		return nil, nil
-	}
 
-	parameters := make([]protocol.ParameterInformation, 0)
-	for _, p := range sig.Parameters {
-		parameters = append(parameters, lsp.ParameterInformation{
-			Label:         p.Name,
-			Documentation: p.Description.Value,
-		})
-	}
-	return &lsp.SignatureHelp{
-		Signatures: []lsp.SignatureInformation{
-			{
-				Label:           sig.Name,
-				Documentation:   sig.Description.Value,
-				Parameters:      parameters,
-				ActiveParameter: 1,
-			},
-		},
-		ActiveSignature: 0,
-		ActiveParameter: 0,
-	}, nil
+	return ilsp.ToSignatureHelp(sig), nil
 }
