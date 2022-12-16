@@ -13,16 +13,22 @@ func ToSignatureHelp(signature *lang.FuncSignature) *lsp.SignatureHelp {
 	parameters := make([]lsp.ParameterInformation, 0)
 	for _, p := range signature.Parameters {
 		parameters = append(parameters, lsp.ParameterInformation{
-			Label:         p.Name,
-			Documentation: p.Description.Value, // TODO? clean
+			Label: p.Name,
+			Documentation: lsp.MarkupContent{
+				Kind:  lsp.Markdown,
+				Value: p.Description.Value, // TODO? clean
+			},
 		})
 	}
 
 	return &lsp.SignatureHelp{
 		Signatures: []lsp.SignatureInformation{
 			{
-				Label:           signature.Name,
-				Documentation:   signature.Description.Value, // TODO? clean
+				Label: signature.Name,
+				Documentation: lsp.MarkupContent{
+					Kind:  lsp.Markdown,
+					Value: signature.Description.Value, // TODO? clean
+				},
 				Parameters:      parameters,
 				ActiveParameter: signature.ActiveParameter,
 			},

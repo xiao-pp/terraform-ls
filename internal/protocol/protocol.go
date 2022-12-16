@@ -3607,7 +3607,7 @@ type ParameterInformation struct {
 	 * The human-readable doc-comment of this signature. Will be shown
 	 * in the UI but can be omitted.
 	 */
-	Documentation string/*string | MarkupContent*/ `json:"documentation,omitempty"`
+	Documentation MarkupContent/*string | MarkupContent*/ `json:"documentation,omitempty"`
 }
 
 type PartialResultParams struct {
@@ -4731,7 +4731,7 @@ type SignatureInformation struct {
 	 * The human-readable doc-comment of this signature. Will be shown
 	 * in the UI but can be omitted.
 	 */
-	Documentation string/*string | MarkupContent*/ `json:"documentation,omitempty"`
+	Documentation MarkupContent/*string | MarkupContent*/ `json:"documentation,omitempty"`
 	/**
 	 * The parameters of this signature.
 	 */
